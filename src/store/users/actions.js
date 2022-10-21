@@ -11,6 +11,6 @@ export const updateUser = createAsyncThunk("UPDATE_USER", ({id, user}) => {
   return UserService.update({id, user})
 })
 
-export const createUser = createAsyncThunk("CREATE_USER", ({id, name, age}) => {
-  return UserService.create({id, name, age})
+export const createUser = createAsyncThunk("CREATE_USER", ({name, age}) => {
+  return UserService.create({name, age})
 })

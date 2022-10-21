@@ -19,14 +19,14 @@ const update = async ({ id, user }) => {
   return getById(id);
 };
 
-const create = async ({id, user}) => {
-  const userRef = doc(db, "users", id);
+const create = async ({user}) => {
+  const userRef = doc(db, "users");
   await addDoc(userRef, user);
-  return getById(id);
+  return getById(user);
 };
 
 export const UserService = {
   get,
   update,
-  create,
+  create
 };

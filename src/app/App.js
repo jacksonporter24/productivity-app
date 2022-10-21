@@ -9,7 +9,6 @@ import {
   addDoc,
   updateDoc,
   deleteDoc,
-  setDoc,
   doc,
 } from "firebase/firestore";
 import { fetchTodos } from "../store/todos/actions";
@@ -35,8 +34,6 @@ function App() {
     dispatch(
       createUserAction({ user: { name: name, age: Number(age) } })
     );
-    console.log('create user is hit')
-    console.log(name)
   };
 
   const updateUser = (id, age) => {
@@ -61,15 +58,15 @@ function App() {
       <div className={styles.createUser}>
         <Input
           placeholder="Name..."
-          onChange={() => {
-            createUser(doc.name);
+          onChange={(event) => {
+            users.name(event.target.value);
           }}
         />
         <Input
           type="number"
           placeholder="Age..."
-          onChange={() => {
-            createUser(doc.age);
+          onChange={(event) => {
+            users.age(event.target.value);
           }}
         />
         <Button type="primary" onClick={createUser}>

@@ -55,10 +55,8 @@ export const UserReducer = createReducer(initialState, (users) => {
     .addCase(UserActions.createUser.fulfilled, (state, { payload }) => {
       const created = { ...payload.data(), id: payload.id };
       return {
-        ...state,
-        users: state.users.map((user) =>
-          user.id === created.id ? created : user
-        ),
+        ...users,
+        ...payload,
       };
     });
 
