@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import "./App.css";
+import { useDispatch, useSelector } from "react-redux";
+import styles from "./App.module.scss";
+import "antd/dist/antd.css";
 import { db } from "../firebase-config";
 import {
   collection,
@@ -8,25 +9,38 @@ import {
   addDoc,
   updateDoc,
   deleteDoc,
+  setDoc,
   doc,
 } from "firebase/firestore";
 import { fetchTodos } from "../store/todos/actions";
+import {
+  fetchUsers,
+  updateUser as updateUserAction,
+  createUser as createUserAction,
+} from "../store/users/actions";
+import { selectUsers } from "../store/users/selectors";
+import { Button, Input } from "antd";
 
 function App() {
   const dispatch = useDispatch();
-  const [newName, setNewName] = useState("");
-  const [newAge, setNewAge] = useState(0);
-  const [users, setUsers] = useState([]);
+  const users = useSelector(selectUsers);
+
+  // const usersExample = useSelector((state) => state.users.users)
+
   const usersCollectionRef = collection(db, "users");
 
-  const createUser = async () => {
-    await addDoc(usersCollectionRef, { name: newName, age: Number(newAge) });
+  const createUser = async (name, age) => {
+    // await addDoc(usersCollectionRef, { name: newName, age: Number(newAge) });
+    // console.log("create User is hit");
+    dispatch(
+      createUserAction({ user: { name: name, age: Number(age) } })
+    );
+    console.log('create user is hit')
+    console.log(name)
   };
 
-  const updateUser = async (id, age) => {
-    const userDoc = doc(db, "users", id);
-    const newFields = { age: age + 1 };
-    await updateDoc(userDoc, newFields);
+  const updateUser = (id, age) => {
+    dispatch(updateUserAction({ id, user: { age: age + 1 } }));
   };
 
   const deleteUser = async (id) => {
@@ -35,53 +49,56 @@ function App() {
   };
 
   useEffect(() => {
-    // const getUsers = async () => {
-
-    //   const data = await getDocs(usersCollectionRef);
-    //   console.log(data)
-    //   setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    // };
-
-    // getUsers();
     dispatch(fetchTodos("123"));
   }, []);
 
+  useEffect(() => {
+    dispatch(fetchUsers("jackson"));
+  }, []);
+
   return (
-    <div className="App">
-      <input
-        placeholder="Name..."
-        onChange={(event) => {
-          setNewName(event.target.value);
-        }}
-      />
-      <input
-        type="number"
-        placeholder="Age..."
-        onChange={(event) => {
-          setNewAge(event.target.value);
-        }}
-      />
-      <button onClick={createUser}>Create User</button>
+    <div className={styles.App}>
+      <div className={styles.createUser}>
+        <Input
+          placeholder="Name..."
+          onChange={() => {
+            createUser(doc.name);
+          }}
+        />
+        <Input
+          type="number"
+          placeholder="Age..."
+          onChange={() => {
+            createUser(doc.age);
+          }}
+        />
+        <Button type="primary" onClick={createUser}>
+          Create User
+        </Button>
+      </div>
       {users.map((user) => {
         return (
           <div>
             {" "}
             <h1>NAME: {user.name}</h1>
             <h1>AGE: {user.age}</h1>
-            <button
+            <Button
+              type="primary"
               onClick={() => {
                 updateUser(user.id, user.age);
               }}
             >
               Increase Age
-            </button>
-            <button
+            </Button>
+            <Button
+              type="primary"
+              danger
               onClick={() => {
                 deleteUser(user.id);
               }}
             >
               Delete User
-            </button>
+            </Button>
           </div>
         );
       })}
