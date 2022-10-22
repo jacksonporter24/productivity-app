@@ -19,14 +19,21 @@ const update = async ({ id, user }) => {
   return getById(id);
 };
 
-const create = async ({user}) => {
-  const userRef = doc(db, "users");
-  await addDoc(userRef, user);
-  return getById(user);
+const create = async ({ user }) => {
+  console.log("create async is hit");
+  console.log(user)
+  const userRef = await addDoc(collection(db, "users"), {
+    name: user.name,
+    age: user.age,
+  });
+  console.log("userRef is hit");
+  // await addDoc(userRef, user, "530");
+  console.log("addDoc is hit");
+  return getById(userRef);
 };
 
 export const UserService = {
   get,
   update,
-  create
+  create,
 };

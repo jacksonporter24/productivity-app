@@ -17,22 +17,38 @@ import {
   updateUser as updateUserAction,
   createUser as createUserAction,
 } from "../store/users/actions";
-import { selectUsers } from "../store/users/selectors";
+import { selectUsers, selectUserName } from "../store/users/selectors";
 import { Button, Input } from "antd";
 
 function App() {
   const dispatch = useDispatch();
+
   const users = useSelector(selectUsers);
 
-  // const usersExample = useSelector((state) => state.users.users)
+  // const name = useSelector(state => state.users.name)
+  const name = useSelector(selectUserName)
 
+  const handleNameChange = (e) => {
+    const tempName = e.target.value
+    console.log(tempName)
+    console.log('handleChagne hit')
+    Object.assign(...state.name,tempName)
+    // dispatch()
+    // dispatch(createAsyncThunk(currentUser))
+    // this.currentUserName = name
+    console.log({name})
+  }
+
+  // const usersExample = useSelector((state) => state.users.users)
+// const newFields = {age: age + 1}
+// await updateDoc(userDoc, newFields);
   const usersCollectionRef = collection(db, "users");
 
   const createUser = async (name, age) => {
     // await addDoc(usersCollectionRef, { name: newName, age: Number(newAge) });
-    // console.log("create User is hit");
+    console.log("create User is hit");
     dispatch(
-      createUserAction({ user: { name: name, age: Number(age) } })
+      createUserAction({ name: name, age: Number(age) })
     );
   };
 
@@ -58,18 +74,18 @@ function App() {
       <div className={styles.createUser}>
         <Input
           placeholder="Name..."
-          onChange={(event) => {
-            users.name(event.target.value);
-          }}
+          value={name}
+          onChange={handleNameChange}
         />
         <Input
           type="number"
           placeholder="Age..."
           onChange={(event) => {
-            users.age(event.target.value);
+            users.age(event.target.value)
           }}
         />
-        <Button type="primary" onClick={createUser}>
+        <Button type="primary" onClick={() => {
+          createUser(this.users.name, this.users.age)}}>
           Create User
         </Button>
       </div>
